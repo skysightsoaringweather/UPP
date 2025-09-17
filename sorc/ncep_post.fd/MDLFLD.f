@@ -707,27 +707,37 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
                  endif
                IF (Model_Radar) THEN
                  ze_nc=10.**(0.1*REF_10CM(I,J,L))
-                 DBZ(I,J,L) = ze_nc+CUREFL(I,J)
+                 if (allocated(DBZ)) DBZ(I,J,L) = ze_nc+CUREFL(I,J)
                ELSE 
-                 DBZ(I,J,L) = DBZR(I,J,L) + DBZI(I,J,L) + CUREFL(I,J)
+                 if (allocated(DBZ) .and. allocated(DBZR) .and. allocated(DBZI)) then
+                   DBZ(I,J,L) = DBZR(I,J,L) + DBZI(I,J,L) + CUREFL(I,J)
+                 else if (allocated(DBZ)) then
+                   DBZ(I,J,L) = CUREFL(I,J)
+                 endif
                END IF
 !                IF(L.EQ.27.and.QQR(I,J,L).gt.1.e-4)print*,              &
 !                    'sample QQR DEN,DBZ= ',QQR(I,J,L),DENS,DBZ(I,J,L)
                ENDIF
-               IF (DBZ(I,J,L)  > 0.) DBZ(I,J,L)  = 10.0*LOG10(DBZ(I,J,L))  ! DBZ
-               IF (DBZR(I,J,L) > 0.) DBZR(I,J,L) = 10.0*LOG10(DBZR(I,J,L)) ! DBZ
-               IF (DBZI(I,J,L) > 0.) DBZI(I,J,L) = 10.0*LOG10(DBZI(I,J,L)) ! DBZ
+               if (allocated(DBZ)) then
+                 IF (DBZ(I,J,L)  > 0.) DBZ(I,J,L)  = 10.0*LOG10(DBZ(I,J,L))  ! DBZ
+               endif
+               if (allocated(DBZR)) then
+                 IF (DBZR(I,J,L) > 0.) DBZR(I,J,L) = 10.0*LOG10(DBZR(I,J,L)) ! DBZ
+               endif
+               if (allocated(DBZI)) then
+                 IF (DBZI(I,J,L) > 0.) DBZI(I,J,L) = 10.0*LOG10(DBZI(I,J,L)) ! DBZ
+               endif
                IF (DBZC(I,J,L) > 0.) DBZC(I,J,L) = 10.0*LOG10(DBZC(I,J,L)) ! DBZ
                LLMH = NINT(LMH(I,J))
                IF(L > LLMH) THEN
-                 DBZ(I,J,L)  = DBZmin
-                 DBZR(I,J,L) = DBZmin
-                 DBZI(I,J,L) = DBZmin
+                 if (allocated(DBZ)) DBZ(I,J,L)  = DBZmin
+                 if (allocated(DBZR)) DBZR(I,J,L) = DBZmin
+                 if (allocated(DBZI)) DBZI(I,J,L) = DBZmin
                  DBZC(I,J,L) = DBZmin
                ELSE
-                 DBZ(I,J,L)  = MAX(DBZmin, DBZ(I,J,L))
-                 DBZR(I,J,L) = MAX(DBZmin, DBZR(I,J,L))
-                 DBZI(I,J,L) = MAX(DBZmin, DBZI(I,J,L))
+                 if (allocated(DBZ)) DBZ(I,J,L)  = MAX(DBZmin, DBZ(I,J,L))
+                 if (allocated(DBZR)) DBZR(I,J,L) = MAX(DBZmin, DBZR(I,J,L))
+                 if (allocated(DBZI)) DBZI(I,J,L) = MAX(DBZmin, DBZI(I,J,L))
                  DBZC(I,J,L) = MAX(DBZmin, DBZC(I,J,L))
                END IF 
              ENDDO
@@ -811,6 +821,7 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
 
 !   -- graupel
               ze_g = 1.e-35
+              if (.not. allocated(qqg)) go to 126
               if (qqg(i,j,ll).lt.1.e-6) go to 126
               graupel = max(r1,qqg(i,j,ll))
               rhoqg=RHOd*graupel
@@ -857,9 +868,9 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
           ze_sum = ze_nc*1.E18  ! + ze_conv
           ze_max = max(ze_max, ze_sum )
 
-             DBZ(i,j,ll) = ze_sum
-             DBZR(i,j,ll) = ze_r*1.E18
-             DBZI(i,j,ll) = (ze_s+ze_g)*1.E18
+             if (allocated(DBZ)) DBZ(i,j,ll) = ze_sum
+             if (allocated(DBZR)) DBZR(i,j,ll) = ze_r*1.E18
+             if (allocated(DBZI)) DBZI(i,j,ll) = (ze_s+ze_g)*1.E18
 
            ENDDO
 !         parameterized convection
