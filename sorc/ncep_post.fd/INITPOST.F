@@ -1167,7 +1167,7 @@
         do i = 1, im
 !            CLDFRA( i, j ) = dummy ( i, j )
             CFR ( i, j, l ) = dum3d ( i, j, l )
-            CFR_RAW ( i, j, l ) = dum3d ( i, j, l )
+            if (allocated(CFR_RAW)) CFR_RAW ( i, j, l ) = dum3d ( i, j, l )
         end do
        end do
       end do 
