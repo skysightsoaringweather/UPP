@@ -2825,12 +2825,18 @@ endif  ! 1==2
 !
 ! obtain map scale factor
 !      VarName='msft'
+      ! Initialize MSFT to 1.0 as default (no map scale factor)
+      do j = jsta_2l, jend_2u
+        do i = 1, im
+          MSFT ( i, j ) = 1.0
+        end do
+      end do
       VarName='MAPFAC_M'
       call getVariable(fileName,DateStr,DataHandle,VarName,DUMMY,        &  
         IM,1,JM,1,IM,JS,JE,1)
        do j = jsta_2l, jend_2u
         do i = 1, im
-            MSFT ( i, j ) = dummy ( i, j ) 
+            if (dummy(i,j) .ne. 0.0) MSFT ( i, j ) = dummy ( i, j ) 
         end do
        end do
 
@@ -2943,8 +2949,13 @@ endif  ! 1==2
 !MEB not sure how to get these 
        do j = jsta_2l, jend_2u
         do i = 1, im
-            DX ( i, j ) = dxval/MSFT(I,J)  
-            DY ( i, j ) = dyval/MSFT(I,J)  
+            if (MSFT(I,J) .ne. 0.0) then
+              DX ( i, j ) = dxval/MSFT(I,J)  
+              DY ( i, j ) = dyval/MSFT(I,J)
+            else
+              DX ( i, j ) = dxval
+              DY ( i, j ) = dyval
+            endif  
         end do
        end do
        ii=im/2
