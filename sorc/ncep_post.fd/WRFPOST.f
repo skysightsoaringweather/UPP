@@ -846,9 +846,10 @@
             CALL SET_OUTFLDS(kth,th,kpv,pv)
             if (me==0) write(0,*)' in WRFPOST size datapd',size(datapd) 
             if(allocated(datapd)) deallocate(datapd)
-            allocate(datapd(im,1:jend-jsta+1,nrecout+100))
+            ! Reduce buffer size - use min of nrecout+10 or 500 for safety margin
+            allocate(datapd(im,1:jend-jsta+1,min(nrecout+10,500)))
 !$omp parallel do private(i,j,k)
-            do k=1,nrecout+100
+            do k=1,min(nrecout+10,500)
               do j=1,jend+1-jsta
                 do i=1,im
                   datapd(i,j,k) = 0.

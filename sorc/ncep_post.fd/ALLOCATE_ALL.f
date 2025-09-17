@@ -55,6 +55,17 @@
       include 'mpif.h'
 !
       integer ierr,i,jsx,jex
+      logical minimal_memory
+      character(len=10) :: env_minimal_mem
+      
+! Check for minimal memory mode
+      minimal_memory = .false.
+      call get_environment_variable("UPP_MINIMAL_MEMORY", env_minimal_mem)
+      if (trim(env_minimal_mem) == "YES" .or. trim(env_minimal_mem) == "1") then
+        minimal_memory = .true.
+        if (me == 0) print *, 'UPP: Running in minimal memory mode'
+      endif
+      
 ! Allocate arrays
       allocate(u(im+1,jsta_2l:jend_2u,lm))
       allocate(v(im,jsta_2l:jvend_2u,lm))
@@ -86,35 +97,41 @@
       allocate(EL_PBL(im,jsta_2l:jend_2u,lm))
 !     MP FIELD   
       allocate(cwm(im,jsta_2l:jend_2u,lm))
-      allocate(F_ice(im,jsta_2l:jend_2u,lm))
-      allocate(F_rain(im,jsta_2l:jend_2u,lm))
-      allocate(F_RimeF(im,jsta_2l:jend_2u,lm))
-      allocate(QQW(im,jsta_2l:jend_2u,lm))
-      allocate(QQI(im,jsta_2l:jend_2u,lm))
-      allocate(QQR(im,jsta_2l:jend_2u,lm))
-      allocate(QQS(im,jsta_2l:jend_2u,lm))
-      allocate(QQG(im,jsta_2l:jend_2u,lm))
-      allocate(QQNW(im,jsta_2l:jend_2u,lm))
-      allocate(QQNI(im,jsta_2l:jend_2u,lm))
-      allocate(QQNR(im,jsta_2l:jend_2u,lm))
-      allocate(QQNWFA(im,jsta_2l:jend_2u,lm))
-      allocate(QQNIFA(im,jsta_2l:jend_2u,lm))
-      allocate(TAOD5503D(im,jsta_2l:jend_2u,lm))
-      allocate(AEXTC55(im,jsta_2l:jend_2u,lm))
-      allocate(EXTCOF55(im,jsta_2l:jend_2u,lm))
+      if (.not. minimal_memory) then
+        allocate(F_ice(im,jsta_2l:jend_2u,lm))
+        allocate(F_rain(im,jsta_2l:jend_2u,lm))
+        allocate(F_RimeF(im,jsta_2l:jend_2u,lm))
+        allocate(QQW(im,jsta_2l:jend_2u,lm))
+        allocate(QQI(im,jsta_2l:jend_2u,lm))
+        allocate(QQR(im,jsta_2l:jend_2u,lm))
+        allocate(QQS(im,jsta_2l:jend_2u,lm))
+        allocate(QQG(im,jsta_2l:jend_2u,lm))
+        allocate(QQNW(im,jsta_2l:jend_2u,lm))
+        allocate(QQNI(im,jsta_2l:jend_2u,lm))
+        allocate(QQNR(im,jsta_2l:jend_2u,lm))
+        allocate(QQNWFA(im,jsta_2l:jend_2u,lm))
+        allocate(QQNIFA(im,jsta_2l:jend_2u,lm))
+      endif
+      if (.not. minimal_memory) then
+        allocate(TAOD5503D(im,jsta_2l:jend_2u,lm))
+        allocate(AEXTC55(im,jsta_2l:jend_2u,lm))
+        allocate(EXTCOF55(im,jsta_2l:jend_2u,lm))
+      endif
       allocate(CFR(im,jsta_2l:jend_2u,lm))
-      allocate(CFR_RAW(im,jsta_2l:jend_2u,lm))
-      allocate(DBZ(im,jsta_2l:jend_2u,lm))
-      allocate(DBZR(im,jsta_2l:jend_2u,lm))
-      allocate(DBZI(im,jsta_2l:jend_2u,lm))
-      allocate(DBZC(im,jsta_2l:jend_2u,lm))
-      allocate(mcvg(im,jsta_2l:jend_2u,lm))
-      allocate(NLICE(im,jsta_2l:jend_2u,lm))
-!     Wm Lewis: added 
-      allocate(NRAIN(im,jsta_2l:jend_2u,lm))
-      allocate(radius_cloud(im,jsta_2l:jend_2u,lm))
-      allocate(radius_ice(im,jsta_2l:jend_2u,lm))
-      allocate(radius_snow(im,jsta_2l:jend_2u,lm))
+      if (.not. minimal_memory) then
+        allocate(CFR_RAW(im,jsta_2l:jend_2u,lm))
+        allocate(DBZ(im,jsta_2l:jend_2u,lm))
+        allocate(DBZR(im,jsta_2l:jend_2u,lm))
+        allocate(DBZI(im,jsta_2l:jend_2u,lm))
+        allocate(DBZC(im,jsta_2l:jend_2u,lm))
+        allocate(mcvg(im,jsta_2l:jend_2u,lm))
+        allocate(NLICE(im,jsta_2l:jend_2u,lm))
+!       Wm Lewis: added 
+        allocate(NRAIN(im,jsta_2l:jend_2u,lm))
+        allocate(radius_cloud(im,jsta_2l:jend_2u,lm))
+        allocate(radius_ice(im,jsta_2l:jend_2u,lm))
+        allocate(radius_snow(im,jsta_2l:jend_2u,lm))
+      endif
 !GFS FIELD
       allocate(o3(im,jsta_2l:jend_2u,lm))
       allocate(o(im,jsta_2l:jend_2u,lm))
