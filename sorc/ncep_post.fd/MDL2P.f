@@ -366,7 +366,9 @@
                  ENDIF
                  FRIME(I,J) = MAX(FRIME(I,J),H1)
                  IF(TTND(I,J,1)    < SPVAL) RAD(I,J)   = TTND(I,J,1)
-                 IF(O3(I,J,1)      < SPVAL) O3SL(I,J)  = O3(I,J,1)
+                 IF(allocated(O3)) THEN
+                   IF(O3(I,J,1)      < SPVAL) O3SL(I,J)  = O3(I,J,1)
+                 ENDIF
                  IF(CFR(I,J,1)     < SPVAL) CFRSL(I,J) = CFR(I,J,1)
 ! DUST
                  if (gocart_on) then
@@ -539,8 +541,10 @@
                  IF(TTND(I,J,LL) < SPVAL .AND. TTND(I,J,LL-1) < SPVAL)        &
                    RAD(I,J) = TTND(I,J,LL) + (TTND(I,J,LL)-TTND(I,J,LL-1))*FACT
 
-                 IF(O3(I,J,LL) < SPVAL .AND. O3(I,J,LL-1) < SPVAL)            &
-                   O3SL(I,J) = O3(I,J,LL) + (O3(I,J,LL)-O3(I,J,LL-1))*FACT
+                 IF(allocated(O3)) THEN
+                   IF(O3(I,J,LL) < SPVAL .AND. O3(I,J,LL-1) < SPVAL)            &
+                     O3SL(I,J) = O3(I,J,LL) + (O3(I,J,LL)-O3(I,J,LL-1))*FACT
+                 ENDIF
 
                  IF(CFR(I,J,LL) < SPVAL .AND. CFR(I,J,LL-1) < SPVAL)          &
                    CFRSL(I,J) = CFR(I,J,LL) + (CFR(I,J,LL)-CFR(I,J,LL-1))*FACT 
@@ -762,7 +766,7 @@
                  DBZ1(I,J)  = DBZmin
                  FRIME(I,J) = 1.
                  RAD(I,J)   = 0.
-                 O3SL(I,J)  = O3(I,J,LLMH)
+                 IF(allocated(O3)) O3SL(I,J)  = O3(I,J,LLMH)
                  CFRSL(I,J) = 0.
                END IF
 ! Compute heights by interpolating from heights on interface for NAM but
