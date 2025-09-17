@@ -46,15 +46,6 @@
 !
       include 'mpif.h'
 !
-      logical minimal_memory
-      character(len=10) :: env_minimal_mem
-!
-! Check for minimal memory mode
-      minimal_memory = .false.
-      call get_environment_variable("UPP_MINIMAL_MEMORY", env_minimal_mem)
-      if (trim(env_minimal_mem) == "YES" .or. trim(env_minimal_mem) == "1") then
-        minimal_memory = .true.
-      endif
 !
 !     deallocate arrays
 !
@@ -90,26 +81,22 @@
       deallocate(EL_PBL)
 !     MP FIELD   
       deallocate(cwm)
-      if (.not. minimal_memory) then
-        if (allocated(F_ice)) deallocate(F_ice)
-        if (allocated(F_rain)) deallocate(F_rain)
-        if (allocated(F_RimeF)) deallocate(F_RimeF)
-        if (allocated(QQW)) deallocate(QQW)
-        if (allocated(QQI)) deallocate(QQI)
-        if (allocated(QQR)) deallocate(QQR)
-        if (allocated(QQS)) deallocate(QQS)
-        if (allocated(QQG)) deallocate(QQG)
-        if (allocated(QQNW)) deallocate(QQNW)
-        if (allocated(QQNI)) deallocate(QQNI)
-        if (allocated(QQNR)) deallocate(QQNR)
-        if (allocated(QQNWFA)) deallocate(QQNWFA)
-        if (allocated(QQNIFA)) deallocate(QQNIFA)
-      endif
-      if (.not. minimal_memory) then
-        if (allocated(TAOD5503D)) deallocate(TAOD5503D)
-        if (allocated(AEXTC55)) deallocate(AEXTC55)
-        if (allocated(EXTCOF55)) deallocate(EXTCOF55)
-      endif
+      deallocate(F_ice)
+      deallocate(F_rain)
+      deallocate(F_RimeF)
+      deallocate(QQW)
+      deallocate(QQI)
+      deallocate(QQR)
+      deallocate(QQS)
+      deallocate(QQG)
+      deallocate(QQNW)
+      deallocate(QQNI)
+      deallocate(QQNR)
+      deallocate(QQNWFA)
+      deallocate(QQNIFA)
+      deallocate(TAOD5503D)
+      deallocate(AEXTC55)
+      deallocate(EXTCOF55)
       deallocate(CFR)
       deallocate(CFR_RAW)
       deallocate(DBZ)
@@ -124,9 +111,10 @@
       deallocate(radius_ice)
       deallocate(radius_snow)
 !GFS FIELD
-      deallocate(o3)
-      deallocate(o)
-      deallocate(o2)
+      ! GFS ozone and oxygen fields
+      if (allocated(o3)) deallocate(o3)
+      if (allocated(o)) deallocate(o)
+      if (allocated(o2)) deallocate(o2)
       deallocate(tcucns)
 ! Add GFS d3d fields
       if (d3d_on) then
@@ -381,51 +369,47 @@
       deallocate(snownc)
       deallocate(graupelnc)
 ! SRD
-      if (.not. minimal_memory) then
-        if (allocated(wspd10max)) deallocate(wspd10max)
-        if (allocated(w_up_max)) deallocate(w_up_max)
-        if (allocated(w_dn_max)) deallocate(w_dn_max)
-        if (allocated(w_mean)) deallocate(w_mean)
-        if (allocated(refd_max)) deallocate(refd_max)
-        if (allocated(prate_max)) deallocate(prate_max)
-        if (allocated(fprate_max)) deallocate(fprate_max)
-        if (allocated(up_heli_max)) deallocate(up_heli_max)
-        if (allocated(up_heli_max16)) deallocate(up_heli_max16)
-        if (allocated(up_heli_min)) deallocate(up_heli_min)
-        if (allocated(up_heli_min16)) deallocate(up_heli_min16)
-        if (allocated(up_heli_max02)) deallocate(up_heli_max02)
-        if (allocated(up_heli_min02)) deallocate(up_heli_min02)
-        if (allocated(up_heli_max03)) deallocate(up_heli_max03)
-        if (allocated(up_heli_min03)) deallocate(up_heli_min03)
-        if (allocated(rel_vort_max)) deallocate(rel_vort_max)
-        if (allocated(rel_vort_max01)) deallocate(rel_vort_max01)
-        if (allocated(rel_vort_maxhy1)) deallocate(rel_vort_maxhy1)
-        if (allocated(wspd10umax)) deallocate(wspd10umax)
-        if (allocated(wspd10vmax)) deallocate(wspd10vmax)
-        if (allocated(refdm10c_max)) deallocate(refdm10c_max)
-        if (allocated(hail_max2d)) deallocate(hail_max2d)
-        if (allocated(hail_maxk1)) deallocate(hail_maxk1)
-        if (allocated(grpl_max)) deallocate(grpl_max)
-        if (allocated(up_heli)) deallocate(up_heli)
-        if (allocated(up_heli16)) deallocate(up_heli16)
-        if (allocated(ltg1_max)) deallocate(ltg1_max)
-        if (allocated(ltg2_max)) deallocate(ltg2_max)
-        if (allocated(ltg3_max)) deallocate(ltg3_max)
-        if (allocated(nci_ltg)) deallocate(nci_ltg)
-        if (allocated(nca_ltg)) deallocate(nca_ltg)
-        if (allocated(nci_wq)) deallocate(nci_wq)
-        if (allocated(nca_wq)) deallocate(nca_wq)
-        if (allocated(nci_refd)) deallocate(nci_refd)
-        if (allocated(nca_refd)) deallocate(nca_refd)
-      endif
+      deallocate(wspd10max)
+      deallocate(w_up_max)
+      deallocate(w_dn_max)
+      deallocate(w_mean)
+      deallocate(refd_max)
+      deallocate(prate_max)
+      deallocate(fprate_max)
+      deallocate(up_heli_max)
+      deallocate(up_heli_max16)
+      deallocate(up_heli_min)
+      deallocate(up_heli_min16)
+      deallocate(up_heli_max02)
+      deallocate(up_heli_min02)
+      deallocate(up_heli_max03)
+      deallocate(up_heli_min03)
+      deallocate(rel_vort_max)
+      deallocate(rel_vort_max01)
+      deallocate(rel_vort_maxhy1)
+      deallocate(wspd10umax)
+      deallocate(wspd10vmax)
+      deallocate(refdm10c_max)
+      deallocate(hail_max2d)
+      deallocate(hail_maxk1)
+      deallocate(grpl_max)
+      deallocate(up_heli)
+      deallocate(up_heli16)
+      deallocate(ltg1_max)
+      deallocate(ltg2_max)
+      deallocate(ltg3_max)
+      deallocate(nci_ltg)
+      deallocate(nca_ltg)
+      deallocate(nci_wq)
+      deallocate(nca_wq)
+      deallocate(nci_refd)
+      deallocate(nca_refd)
 
 ! CRA
-      if (.not. minimal_memory) then
-        if (allocated(REF_10CM)) deallocate(REF_10CM)
-        if (allocated(REF1KM_10CM)) deallocate(REF1KM_10CM)
-        if (allocated(REF4KM_10CM)) deallocate(REF4KM_10CM)
-      endif
+      deallocate(REF_10CM)
       deallocate(REFC_10CM)
+      deallocate(REF1KM_10CM)
+      deallocate(REF4KM_10CM)
 ! CRA
       deallocate(U10mean)
       deallocate(V10mean)
@@ -451,15 +435,15 @@
       deallocate(vtm)
 
 ! add GFIP ICING
-      if (.not. minimal_memory) then
-        if (allocated(icing_gfip)) deallocate(icing_gfip)
-        if (allocated(icing_gfis)) deallocate(icing_gfis)
+      ! GFIP icing fields
+      if (allocated(icing_gfip)) deallocate(icing_gfip)
+      if (allocated(icing_gfis)) deallocate(icing_gfis)
 
 ! add GTG turbulence
-        if (allocated(catedr)) deallocate(catedr)
-        if (allocated(mwt)) deallocate(mwt)
-        if (allocated(gtg)) deallocate(gtg)
-      endif
+      ! GTG turbulence fields
+      if (allocated(catedr)) deallocate(catedr)
+      if (allocated(mwt)) deallocate(mwt)
+      if (allocated(gtg)) deallocate(gtg)
 
 !
       if (gocart_on) then
