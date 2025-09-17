@@ -681,20 +681,20 @@
        do l = 1, lm
         do j = jsta_2l, jend_2u
          do i = 1, im
-          IF(QQR(I,J,L).LT.SPVAL)THEN
-           CWM(I,J,L)=QQR(I,J,L)
+          IF(allocated(QQR))THEN
+           IF(QQR(I,J,L).LT.SPVAL) CWM(I,J,L)=QQR(I,J,L)
           END IF
-          IF(QQI(I,J,L).LT.SPVAL)THEN
-           CWM(I,J,L)=CWM(I,J,L)+QQI(I,J,L)
+          IF(allocated(QQI))THEN
+           IF(QQI(I,J,L).LT.SPVAL) CWM(I,J,L)=CWM(I,J,L)+QQI(I,J,L)
           END IF
-          IF(QQW(I,J,L).LT.SPVAL)THEN
-           CWM(I,J,L)=CWM(I,J,L)+QQW(I,J,L)
+          IF(allocated(QQW))THEN
+           IF(QQW(I,J,L).LT.SPVAL) CWM(I,J,L)=CWM(I,J,L)+QQW(I,J,L)
           END IF
-          IF(QQS(I,J,L).LT.SPVAL)THEN
-           CWM(I,J,L)=CWM(I,J,L)+QQS(I,J,L)
+          IF(allocated(QQS))THEN
+           IF(QQS(I,J,L).LT.SPVAL) CWM(I,J,L)=CWM(I,J,L)+QQS(I,J,L)
           END IF
-          IF(QQG(I,J,L).LT.SPVAL)THEN
-           CWM(I,J,L)=CWM(I,J,L)+QQG(I,J,L)
+          IF(allocated(QQG))THEN
+           IF(QQG(I,J,L).LT.SPVAL) CWM(I,J,L)=CWM(I,J,L)+QQG(I,J,L)
           END IF 
          end do
         end do
@@ -1187,8 +1187,16 @@
         do k = 1,lm
           do j = jsta_2l, jend_2u
              do i = 1, im
-               dummy(i,j)=QQW(i,j,k)
-               dummy2(i,j)=QQI(i,j,k)
+               if (allocated(QQW)) then
+                 dummy(i,j)=QQW(i,j,k)
+               else
+                 dummy(i,j)=0.
+               endif
+               if (allocated(QQI)) then
+                 dummy2(i,j)=QQI(i,j,k)
+               else
+                 dummy2(i,j)=0.
+               endif
              enddo
           enddo
 
