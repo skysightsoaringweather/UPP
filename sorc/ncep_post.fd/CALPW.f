@@ -111,33 +111,69 @@
             ENDDO
           ENDDO
         ELSE IF (IDECID == 2) THEN
+          IF (allocated(QQW)) THEN
 !$omp  parallel do private(i,j)
-          DO J=JSTA,JEND
-            DO I=1,IM
-              Qdum(I,J) = QQW(I,J,L)
+            DO J=JSTA,JEND
+              DO I=1,IM
+                Qdum(I,J) = QQW(I,J,L)
+              ENDDO
             ENDDO
-          ENDDO
+          ELSE
+!$omp  parallel do private(i,j)
+            DO J=JSTA,JEND
+              DO I=1,IM
+                Qdum(I,J) = 0.
+              ENDDO
+            ENDDO
+          ENDIF
         ELSE IF (IDECID == 3) THEN
+          IF (allocated(QQI)) THEN
 !$omp  parallel do private(i,j)
-          DO J=JSTA,JEND
-            DO I=1,IM
-              Qdum(I,J) = QQI(I,J,L)
+            DO J=JSTA,JEND
+              DO I=1,IM
+                Qdum(I,J) = QQI(I,J,L)
+              ENDDO
             ENDDO
-          ENDDO
+          ELSE
+!$omp  parallel do private(i,j)
+            DO J=JSTA,JEND
+              DO I=1,IM
+                Qdum(I,J) = 0.
+              ENDDO
+            ENDDO
+          ENDIF
         ELSE IF (IDECID == 4) THEN
+          IF (allocated(QQR)) THEN
 !$omp  parallel do private(i,j)
-          DO J=JSTA,JEND
-            DO I=1,IM
-              Qdum(I,J) = QQR(I,J,L)
+            DO J=JSTA,JEND
+              DO I=1,IM
+                Qdum(I,J) = QQR(I,J,L)
+              ENDDO
             ENDDO
-          ENDDO
+          ELSE
+!$omp  parallel do private(i,j)
+            DO J=JSTA,JEND
+              DO I=1,IM
+                Qdum(I,J) = 0.
+              ENDDO
+            ENDDO
+          ENDIF
         ELSE IF (IDECID == 5) THEN
+          IF (allocated(QQS)) THEN
 !$omp  parallel do private(i,j)
-          DO J=JSTA,JEND
-            DO I=1,IM
-              Qdum(I,J) = QQS(I,J,L)
+            DO J=JSTA,JEND
+              DO I=1,IM
+                Qdum(I,J) = QQS(I,J,L)
+              ENDDO
             ENDDO
-          ENDDO
+          ELSE
+!$omp  parallel do private(i,j)
+            DO J=JSTA,JEND
+              DO I=1,IM
+                Qdum(I,J) = 0.
+              ENDDO
+            ENDDO
+          ENDIF
         ELSE IF (IDECID == 6) THEN
 !$omp  parallel do private(i,j)
           DO J=JSTA,JEND
@@ -147,12 +183,21 @@
           ENDDO
 ! SRD
         ELSE IF (IDECID == 16) THEN
+          IF (allocated(QQG)) THEN
 !$omp  parallel do private(i,j)
-          DO J=JSTA,JEND
-            DO I=1,IM
-              Qdum(I,J) = QQG(I,J,L)
+            DO J=JSTA,JEND
+              DO I=1,IM
+                Qdum(I,J) = QQG(I,J,L)
+              ENDDO
             ENDDO
-          ENDDO
+          ELSE
+!$omp  parallel do private(i,j)
+            DO J=JSTA,JEND
+              DO I=1,IM
+                Qdum(I,J) = 0.
+              ENDDO
+            ENDDO
+          ENDIF
 ! SRD
         ELSE IF (IDECID == 7) THEN
 !-- Total supercooled liquid
@@ -162,7 +207,9 @@
               IF (T(I,J,L) .GE. TFRZ) THEN
                 Qdum(I,J) = 0.
               ELSE
-                Qdum(I,J) = QQW(I,J,L) + QQR(I,J,L)
+                Qdum(I,J) = 0.
+                if (allocated(QQW)) Qdum(I,J) = Qdum(I,J) + QQW(I,J,L)
+                if (allocated(QQR)) Qdum(I,J) = Qdum(I,J) + QQR(I,J,L)
               ENDIF
             ENDDO
           ENDDO
@@ -174,7 +221,9 @@
               IF (T(I,J,L) <= TFRZ) THEN
                 Qdum(I,J) = 0.
               ELSE
-                Qdum(I,J) = QQI(I,J,L) + QQS(I,J,L)
+                Qdum(I,J) = 0.
+                if (allocated(QQI)) Qdum(I,J) = Qdum(I,J) + QQI(I,J,L)
+                if (allocated(QQS)) Qdum(I,J) = Qdum(I,J) + QQS(I,J,L)
               ENDIF
             ENDDO
           ENDDO

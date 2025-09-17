@@ -5476,6 +5476,32 @@ snow_check:   IF (QQS(I,J,L)>=QCLDmin) THEN
 !      IF (IGET(677).GT.0) call wrt_aero_diag(677,nbin_su,sudp)
 !      IF (IGET(678).GT.0) call wrt_aero_diag(678,nbin_su,suwt)
 !      print *,'aft wrt disg suwt'
+
+!       Deallocate aerosol arrays to prevent memory leak
+        if (allocated(extrhd_DU)) deallocate(extrhd_DU)
+        if (allocated(extrhd_SS)) deallocate(extrhd_SS)
+        if (allocated(extrhd_SU)) deallocate(extrhd_SU)
+        if (allocated(extrhd_BC)) deallocate(extrhd_BC)
+        if (allocated(extrhd_OC)) deallocate(extrhd_OC)
+        
+        if (allocated(scarhd_DU)) deallocate(scarhd_DU)
+        if (allocated(scarhd_SS)) deallocate(scarhd_SS)
+        if (allocated(scarhd_SU)) deallocate(scarhd_SU)
+        if (allocated(scarhd_BC)) deallocate(scarhd_BC)
+        if (allocated(scarhd_OC)) deallocate(scarhd_OC)
+        
+        if (allocated(asyrhd_DU)) deallocate(asyrhd_DU)
+        if (allocated(asyrhd_SS)) deallocate(asyrhd_SS)
+        if (allocated(asyrhd_SU)) deallocate(asyrhd_SU)
+        if (allocated(asyrhd_BC)) deallocate(asyrhd_BC)
+        if (allocated(asyrhd_OC)) deallocate(asyrhd_OC)
+        
+        if (allocated(ssarhd_DU)) deallocate(ssarhd_DU)
+        if (allocated(ssarhd_SS)) deallocate(ssarhd_SS)
+        if (allocated(ssarhd_SU)) deallocate(ssarhd_SU)
+        if (allocated(ssarhd_BC)) deallocate(ssarhd_BC)
+        if (allocated(ssarhd_OC)) deallocate(ssarhd_OC)
+
       endif          ! if gocart_on
 !
 !     END OF ROUTINE.

@@ -462,11 +462,11 @@
 ! Brad comment out the output of individual species for Ferriers scheme within
 ! ARW in Registry file
 
-      qqw=0.
-      qqr=0.
-      qqs=0.
-      qqi=0.
-      qqg=0. 
+      if (allocated(qqw)) qqw=0.
+      if (allocated(qqr)) qqr=0.
+      if (allocated(qqs)) qqs=0.
+      if (allocated(qqi)) qqi=0.
+      if (allocated(qqg)) qqg=0. 
       qqni=0. 
       qqnr=0. 
       cwm=0.
@@ -484,12 +484,12 @@
 ! partition cloud water and ice for WSM3 
 	    if(imp_physics.eq.3)then 
              if(t(i,j,l) .ge. TFRZ)then  
-              qqw ( i, j, l ) = dum3d ( i, j, l )
+              if (allocated(qqw)) qqw ( i, j, l ) = dum3d ( i, j, l )
 	     else
-	      qqi  ( i, j, l ) = dum3d ( i, j, l )
+	      if (allocated(qqi)) qqi  ( i, j, l ) = dum3d ( i, j, l )
 	     end if
             else ! bug fix provided by J CASE
-             qqw ( i, j, l ) = dum3d ( i, j, l )
+             if (allocated(qqw)) qqw ( i, j, l ) = dum3d ( i, j, l )
 	    end if  	     
         end do
        end do
@@ -509,7 +509,7 @@
       do l = 1, lm
        do j = jsta_2l, jend_2u
         do i = 1, im
-            qqi ( i, j, l ) = dum3d ( i, j, l )
+            if (allocated(qqi)) qqi ( i, j, l ) = dum3d ( i, j, l )
         end do
        end do
       end do
