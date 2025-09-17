@@ -528,12 +528,12 @@
 ! partition rain and snow for WSM3 	
           if(imp_physics .eq. 3)then
 	    if(t(i,j,l) .ge. TFRZ)then  
-             qqr ( i, j, l ) = dum3d ( i, j, l )
+             if (allocated(qqr)) qqr ( i, j, l ) = dum3d ( i, j, l )
 	    else
-	     qqs ( i, j, l ) = dum3d ( i, j, l )
+	     if (allocated(qqs)) qqs ( i, j, l ) = dum3d ( i, j, l )
 	    end if
            else ! bug fix provided by J CASE
-            qqr ( i, j, l ) = dum3d ( i, j, l )  
+            if (allocated(qqr)) qqr ( i, j, l ) = dum3d ( i, j, l )  
 	   end if 
             dummy(i,j)=dum3d(i,j,l)
         end do
@@ -553,7 +553,9 @@
       do l = 1, lm
        do j = jsta_2l, jend_2u
         do i = 1, im
-           qrmax(i,j)=max(qrmax(i,j),qqr(i,j,l))
+           if (allocated(qqr)) then
+             qrmax(i,j)=max(qrmax(i,j),qqr(i,j,l))
+           endif
         end do
        end do
       end do
@@ -569,7 +571,7 @@
       do l = 1, lm
        do j = jsta_2l, jend_2u
         do i = 1, im
-            qqs ( i, j, l ) = dum3d ( i, j, l )
+            if (allocated(qqs)) qqs ( i, j, l ) = dum3d ( i, j, l )
             dummy(i,j)=dum3d(i,j,l)
         end do
        end do
@@ -586,7 +588,7 @@
       do l = 1, lm
        do j = jsta_2l, jend_2u
         do i = 1, im
-            qqg ( i, j, l ) = dum3d ( i, j, l )
+            if (allocated(qqg)) qqg ( i, j, l ) = dum3d ( i, j, l )
         end do
        end do
       end do
