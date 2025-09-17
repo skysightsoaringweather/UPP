@@ -434,7 +434,7 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
             if (allocated(DBZ)) DBZ(I,J,L)  = DBZmin
             if (allocated(DBZR)) DBZR(I,J,L) = DBZmin
             if (allocated(DBZI)) DBZI(I,J,L) = DBZmin
-            DBZC(I,J,L) = DBZmin
+            if (allocated(DBZC)) DBZC(I,J,L) = DBZmin
           ELSE
             if (allocated(QQW)) QQW(I,J,L)   = MAX(D00, QW1(I,J))
             if (allocated(QQI)) QQI(I,J,L)   = MAX(D00, QI1(I,J))
@@ -443,7 +443,7 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
             if (allocated(DBZ)) DBZ(I,J,L)   = MAX(DBZmin, DBZ1(I,J))
             if (allocated(DBZR)) DBZR(I,J,L)  = MAX(DBZmin, DBZR1(I,J))
             if (allocated(DBZI)) DBZI(I,J,L)  = MAX(DBZmin, DBZI1(I,J))
-            DBZC(I,J,L)  = MAX(DBZmin, DBZC1(I,J))
+            if (allocated(DBZC)) DBZC(I,J,L)  = MAX(DBZmin, DBZC1(I,J))
             NLICE(I,J,L) = MAX(D00, NLICE1(I,J))
             NRAIN(I,J,L) = MAX(D00, NRAIN1(I,J))
           ENDIF       !-- End IF (L .GT. LMH(I,J)) ...
@@ -476,7 +476,7 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
             if (allocated(DBZ)) DBZ(I,J,L)  = DBZmin
             if (allocated(DBZR)) DBZR(I,J,L) = DBZmin
             if (allocated(DBZI)) DBZI(I,J,L) = DBZmin
-            DBZC(I,J,L) = DBZmin
+            if (allocated(DBZC)) DBZC(I,J,L) = DBZmin
           ELSE
             if (allocated(QQI) .and. allocated(F_ice)) then
               QQI(I,J,L)  = MAX(D00, CWM(I,J,L)*F_ice(I,J,L))
@@ -493,7 +493,7 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
             if (allocated(DBZ)) DBZ(I,J,L)  = DBZmin
             if (allocated(DBZR)) DBZR(I,J,L) = DBZmin
             if (allocated(DBZI)) DBZI(I,J,L) = DBZmin
-            DBZC(I,J,L) = DBZmin
+            if (allocated(DBZC)) DBZC(I,J,L) = DBZmin
           ENDIF       !-- End IF (L .GT. LMH(I,J)) ...
          ENDDO         !-- End DO I loop
         ENDDO  ! END DO L LOOP
@@ -512,7 +512,7 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
             if (allocated(DBZ)) DBZ(I,J,L)=DBZmin
             if (allocated(DBZR)) DBZR(I,J,L)=DBZmin
             if (allocated(DBZI)) DBZI(I,J,L)=DBZmin
-            DBZC(I,J,L)=DBZmin
+            if (allocated(DBZC)) DBZC(I,J,L)=DBZmin
           ELSE
             if (allocated(QQI)) QQI(I,J,L)=D00
             if (allocated(QQW) .and. allocated(F_ice) .and. allocated(F_rain)) then
@@ -649,7 +649,7 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
                  ENDIF             !-- End IF (DELZ .LE. 0.)
                 ENDIF                !-- End IF (L.GE.HTOP(I,J) .OR. L.LE.LLMH)
                 CUREFL(I,J)=FCTR*CUREFL_S(I,J)
-                DBZC(I,J,L)=CUREFL(I,J)
+                if (allocated(DBZC)) DBZC(I,J,L)=CUREFL(I,J)
                ENDIF                   !-- End IF (CUREFL_S(I,J) .GT. 0.)
 
 !              IF(T(I,J,L)  <  1.0E-3) print*,'ZERO T'    
@@ -727,18 +727,20 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
                if (allocated(DBZI)) then
                  IF (DBZI(I,J,L) > 0.) DBZI(I,J,L) = 10.0*LOG10(DBZI(I,J,L)) ! DBZ
                endif
-               IF (DBZC(I,J,L) > 0.) DBZC(I,J,L) = 10.0*LOG10(DBZC(I,J,L)) ! DBZ
+               if (allocated(DBZC)) then
+                 IF (DBZC(I,J,L) > 0.) DBZC(I,J,L) = 10.0*LOG10(DBZC(I,J,L)) ! DBZ
+               endif
                LLMH = NINT(LMH(I,J))
                IF(L > LLMH) THEN
                  if (allocated(DBZ)) DBZ(I,J,L)  = DBZmin
                  if (allocated(DBZR)) DBZR(I,J,L) = DBZmin
                  if (allocated(DBZI)) DBZI(I,J,L) = DBZmin
-                 DBZC(I,J,L) = DBZmin
+                 if (allocated(DBZC)) DBZC(I,J,L) = DBZmin
                ELSE
                  if (allocated(DBZ)) DBZ(I,J,L)  = MAX(DBZmin, DBZ(I,J,L))
                  if (allocated(DBZR)) DBZR(I,J,L) = MAX(DBZmin, DBZR(I,J,L))
                  if (allocated(DBZI)) DBZI(I,J,L) = MAX(DBZmin, DBZI(I,J,L))
-                 DBZC(I,J,L) = MAX(DBZmin, DBZC(I,J,L))
+                 if (allocated(DBZC)) DBZC(I,J,L) = MAX(DBZmin, DBZC(I,J,L))
                END IF 
              ENDDO
            ENDDO
@@ -3122,9 +3124,11 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
          DO J=JSTA,JEND
             DO I=1,IM
                GRID1(I,J)=DBZmin
-               DO L=1,NINT(LMH(I,J))
-                  GRID1(I,J)=MAX( GRID1(I,J), DBZC(I,J,L) )
-               ENDDO
+               if (allocated(DBZC)) then
+                 DO L=1,NINT(LMH(I,J))
+                    GRID1(I,J)=MAX( GRID1(I,J), DBZC(I,J,L) )
+                 ENDDO
+               endif
             ENDDO
          ENDDO
          ID(1:25) = 0
