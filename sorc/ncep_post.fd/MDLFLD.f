@@ -426,23 +426,23 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
         DO I=1,IM
           LLMH = NINT(LMH(I,J))
           IF (L .GT. LLMH) THEN
-            QQW(I,J,L)  = D00
-            QQI(I,J,L)  = D00
-            QQR(I,J,L)  = D00
-            QQS(I,J,L)  = D00
+            if (allocated(QQW)) QQW(I,J,L)  = D00
+            if (allocated(QQI)) QQI(I,J,L)  = D00
+            if (allocated(QQR)) QQR(I,J,L)  = D00
+            if (allocated(QQS)) QQS(I,J,L)  = D00
             CFR(I,J,L)  = D00
-            DBZ(I,J,L)  = DBZmin
-            DBZR(I,J,L) = DBZmin
-            DBZI(I,J,L) = DBZmin
+            if (allocated(DBZ)) DBZ(I,J,L)  = DBZmin
+            if (allocated(DBZR)) DBZR(I,J,L) = DBZmin
+            if (allocated(DBZI)) DBZI(I,J,L) = DBZmin
             DBZC(I,J,L) = DBZmin
           ELSE
-            QQW(I,J,L)   = MAX(D00, QW1(I,J))
-            QQI(I,J,L)   = MAX(D00, QI1(I,J))
-            QQR(I,J,L)   = MAX(D00, QR1(I,J))
-            QQS(I,J,L)   = MAX(D00, QS1(I,J))
-            DBZ(I,J,L)   = MAX(DBZmin, DBZ1(I,J))
-            DBZR(I,J,L)  = MAX(DBZmin, DBZR1(I,J))
-            DBZI(I,J,L)  = MAX(DBZmin, DBZI1(I,J))
+            if (allocated(QQW)) QQW(I,J,L)   = MAX(D00, QW1(I,J))
+            if (allocated(QQI)) QQI(I,J,L)   = MAX(D00, QI1(I,J))
+            if (allocated(QQR)) QQR(I,J,L)   = MAX(D00, QR1(I,J))
+            if (allocated(QQS)) QQS(I,J,L)   = MAX(D00, QS1(I,J))
+            if (allocated(DBZ)) DBZ(I,J,L)   = MAX(DBZmin, DBZ1(I,J))
+            if (allocated(DBZR)) DBZR(I,J,L)  = MAX(DBZmin, DBZR1(I,J))
+            if (allocated(DBZI)) DBZI(I,J,L)  = MAX(DBZmin, DBZI1(I,J))
             DBZC(I,J,L)  = MAX(DBZmin, DBZC1(I,J))
             NLICE(I,J,L) = MAX(D00, NLICE1(I,J))
             NRAIN(I,J,L) = MAX(D00, NRAIN1(I,J))
@@ -468,23 +468,31 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
          DO I=1,IM
           LLMH = NINT(LMH(I,J))
           IF (L .GT. LLMH) THEN
-            QQW(I,J,L)  = D00
-            QQI(I,J,L)  = D00
-            QQR(I,J,L)  = D00
-            QQS(I,J,L)  = D00
+            if (allocated(QQW)) QQW(I,J,L)  = D00
+            if (allocated(QQI)) QQI(I,J,L)  = D00
+            if (allocated(QQR)) QQR(I,J,L)  = D00
+            if (allocated(QQS)) QQS(I,J,L)  = D00
             CFR(I,J,L)  = D00
-            DBZ(I,J,L)  = DBZmin
-            DBZR(I,J,L) = DBZmin
-            DBZI(I,J,L) = DBZmin
+            if (allocated(DBZ)) DBZ(I,J,L)  = DBZmin
+            if (allocated(DBZR)) DBZR(I,J,L) = DBZmin
+            if (allocated(DBZI)) DBZI(I,J,L) = DBZmin
             DBZC(I,J,L) = DBZmin
           ELSE
-            QQI(I,J,L)  = MAX(D00, CWM(I,J,L)*F_ice(I,J,L))
-            QQW(I,J,L)  = MAX(D00, CWM(I,J,L)-QQI(I,J,L))
-            QQR(I,J,L)  = D00
-            QQS(I,J,L)  = D00
-            DBZ(I,J,L)  = DBZmin
-            DBZR(I,J,L) = DBZmin
-            DBZI(I,J,L) = DBZmin
+            if (allocated(QQI) .and. allocated(F_ice)) then
+              QQI(I,J,L)  = MAX(D00, CWM(I,J,L)*F_ice(I,J,L))
+            else if (allocated(QQI)) then
+              QQI(I,J,L)  = D00
+            endif
+            if (allocated(QQW) .and. allocated(QQI)) then
+              QQW(I,J,L)  = MAX(D00, CWM(I,J,L)-QQI(I,J,L))
+            else if (allocated(QQW)) then
+              QQW(I,J,L)  = MAX(D00, CWM(I,J,L))
+            endif
+            if (allocated(QQR)) QQR(I,J,L)  = D00
+            if (allocated(QQS)) QQS(I,J,L)  = D00
+            if (allocated(DBZ)) DBZ(I,J,L)  = DBZmin
+            if (allocated(DBZR)) DBZR(I,J,L) = DBZmin
+            if (allocated(DBZI)) DBZI(I,J,L) = DBZmin
             DBZC(I,J,L) = DBZmin
           ENDIF       !-- End IF (L .GT. LMH(I,J)) ...
          ENDDO         !-- End DO I loop
@@ -496,33 +504,63 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
          DO I=1,IM
           LLMH = NINT(LMH(I,J))
           IF (L .GT. LLMH) THEN
-            QQW(I,J,L)=D00
-            QQI(I,J,L)=D00
-            QQR(I,J,L)=D00
-            QQS(I,J,L)=D00
+            if (allocated(QQW)) QQW(I,J,L)=D00
+            if (allocated(QQI)) QQI(I,J,L)=D00
+            if (allocated(QQR)) QQR(I,J,L)=D00
+            if (allocated(QQS)) QQS(I,J,L)=D00
             CFR(I,J,L)=D00
-            DBZ(I,J,L)=DBZmin
-            DBZR(I,J,L)=DBZmin
-            DBZI(I,J,L)=DBZmin
+            if (allocated(DBZ)) DBZ(I,J,L)=DBZmin
+            if (allocated(DBZR)) DBZR(I,J,L)=DBZmin
+            if (allocated(DBZI)) DBZI(I,J,L)=DBZmin
             DBZC(I,J,L)=DBZmin
           ELSE
-            QQI(I,J,L)=D00
-	    QQW(I,J,L)=MAX(D00, (1.-F_ice(I,J,L))*CWM(I,J,L)*(1.-F_rain(I,J,L)))
-            QQR(I,J,L)=MAX(D00,(1.-F_ice(I,J,L))*CWM(I,J,L)*F_rain(I,J,L))
-            QQS(I,J,L)=MAX(D00, CWM(I,J,L)*F_ice(I,J,L))
+            if (allocated(QQI)) QQI(I,J,L)=D00
+            if (allocated(QQW) .and. allocated(F_ice) .and. allocated(F_rain)) then
+              QQW(I,J,L)=MAX(D00, (1.-F_ice(I,J,L))*CWM(I,J,L)*(1.-F_rain(I,J,L)))
+            else if (allocated(QQW)) then
+              QQW(I,J,L)=MAX(D00, CWM(I,J,L))
+            endif
+            if (allocated(QQR) .and. allocated(F_ice) .and. allocated(F_rain)) then
+              QQR(I,J,L)=MAX(D00,(1.-F_ice(I,J,L))*CWM(I,J,L)*F_rain(I,J,L))
+            else if (allocated(QQR)) then
+              QQR(I,J,L)=D00
+            endif
+            if (allocated(QQS) .and. allocated(F_ice)) then
+              QQS(I,J,L)=MAX(D00, CWM(I,J,L)*F_ice(I,J,L))
+            else if (allocated(QQS)) then
+              QQS(I,J,L)=D00
+            endif
 	    DENS=PMID(I,J,L)/(RD*T(I,J,L)*(Q(I,J,L)*D608+1.0))      ! DENSITY
-	    DBZR(I,J,L)=((QQR(I,J,L)*DENS)**1.75)*           &
-     &               3.630803E-9 * 1.E18                  ! Z FOR RAIN
-            DBZI(I,J,L)= DBZI(I,J,L)+((QQS(I,J,L)*DENS)**1.75)* &
-     &               2.18500E-10 * 1.E18                  ! Z FOR SNOW
-            DBZ(I,J,L)=DBZR(I,J,L)+DBZI(I,J,L)
-	    IF (DBZ(I,J,L).GT.0.) DBZ(I,J,L)=10.0*LOG10(DBZ(I,J,L)) ! DBZ
-            IF (DBZR(I,J,L).GT.0.)DBZR(I,J,L)=10.0*LOG10(DBZR(I,J,L)) ! DBZ
-            IF (DBZI(I,J,L).GT.0.)      &
-     &         DBZI(I,J,L)=10.0*LOG10(DBZI(I,J,L)) ! DBZ
-            DBZ(I,J,L)=MAX(DBZmin, DBZ(I,J,L))
-            DBZR(I,J,L)=MAX(DBZmin, DBZR(I,J,L))
-            DBZI(I,J,L)=MAX(DBZmin, DBZI(I,J,L))
+            if (allocated(DBZR) .and. allocated(QQR)) then
+	      DBZR(I,J,L)=((QQR(I,J,L)*DENS)**1.75)*           &
+     &                 3.630803E-9 * 1.E18                  ! Z FOR RAIN
+            else if (allocated(DBZR)) then
+              DBZR(I,J,L)=DBZmin
+            endif
+            if (allocated(DBZI) .and. allocated(QQS)) then
+              DBZI(I,J,L)= DBZI(I,J,L)+((QQS(I,J,L)*DENS)**1.75)* &
+     &                 2.18500E-10 * 1.E18                  ! Z FOR SNOW
+            else if (allocated(DBZI)) then
+              DBZI(I,J,L)=DBZmin
+            endif
+            if (allocated(DBZ) .and. allocated(DBZR) .and. allocated(DBZI)) then
+              DBZ(I,J,L)=DBZR(I,J,L)+DBZI(I,J,L)
+            else if (allocated(DBZ)) then
+              DBZ(I,J,L)=DBZmin
+            endif
+            if (allocated(DBZ)) then
+	      IF (DBZ(I,J,L).GT.0.) DBZ(I,J,L)=10.0*LOG10(DBZ(I,J,L)) ! DBZ
+            endif
+            if (allocated(DBZR)) then
+              IF (DBZR(I,J,L).GT.0.)DBZR(I,J,L)=10.0*LOG10(DBZR(I,J,L)) ! DBZ
+            endif
+            if (allocated(DBZI)) then
+              IF (DBZI(I,J,L).GT.0.)      &
+     &           DBZI(I,J,L)=10.0*LOG10(DBZI(I,J,L)) ! DBZ
+            endif
+            if (allocated(DBZ)) DBZ(I,J,L)=MAX(DBZmin, DBZ(I,J,L))
+            if (allocated(DBZR)) DBZR(I,J,L)=MAX(DBZmin, DBZR(I,J,L))
+            if (allocated(DBZI)) DBZI(I,J,L)=MAX(DBZmin, DBZI(I,J,L))
     
           ENDIF       !-- End IF (L .GT. LMH(I,J)) ...
          ENDDO         !-- End DO I loop
@@ -621,37 +659,51 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
 ! PATCH to se(1.-FI1D(I,J))*C1D(I,J)*FR1D(I,J)t QQR, QQS, AND QQG to 
 !       zeros if they are negative so that post won't abort
 
-               QQR(I,J,L) = max(QQR(I,J,L),0.0)
-               QQS(I,J,L) = max(QQS(I,J,L),0.0)        ! jkw
+               if (allocated(QQR)) then
+                 QQR(I,J,L) = max(QQR(I,J,L),0.0)
+               endif
+               if (allocated(QQS)) then
+                 QQS(I,J,L) = max(QQS(I,J,L),0.0)        ! jkw
+               endif
                IF (IICE == 0) THEN
                  IF (T(I,J,L) >= TFRZ) THEN
-                   DBZ(I,J,L) = ((QQR(I,J,L)*DENS)**1.75)*         &
-     &                          3.630803E-9 * 1.E18                ! Z FOR RAIN
-                   DBZR(I,J,L) = DBZ(I,J,L)
+                   if (allocated(QQR) .and. allocated(DBZ) .and. allocated(DBZR)) then
+                     DBZ(I,J,L) = ((QQR(I,J,L)*DENS)**1.75)*         &
+     &                            3.630803E-9 * 1.E18                ! Z FOR RAIN
+                     DBZR(I,J,L) = DBZ(I,J,L)
+                   endif
                  ELSE
 !mptest            DBZ(I,J,L) = ((QQR(I,J,L)*DENS)**1.75)*  &
-                   DBZ(I,J,L) = ((QQS(I,J,L)*DENS)**1.75)*         &
-     &                          2.18500E-10 * 1.E18                  ! Z FOR SNOW
-                   DBZI(I,J,L) = DBZ(I,J,L)
+                   if (allocated(QQS) .and. allocated(DBZ) .and. allocated(DBZI)) then
+                     DBZ(I,J,L) = ((QQS(I,J,L)*DENS)**1.75)*         &
+     &                            2.18500E-10 * 1.E18                  ! Z FOR SNOW
+                     DBZI(I,J,L) = DBZ(I,J,L)
+                   endif
                  ENDIF
                ELSEIF (IICE == 1) THEN
-                 QQG(I,J,L)  = max(QQG(I,J,L),0.0)
-                 if(QQR(I,J,L) < SPVAL .and. QQR(I,J,L)> 0.0) then
-                   DBZR(I,J,L) = ((QQR(I,J,L)*DENS)**1.75) * 3.630803E-9 * 1.E18 ! Z FOR RAIN
+                 if (allocated(QQG)) QQG(I,J,L)  = max(QQG(I,J,L),0.0)
+                 if(allocated(QQR) .and. allocated(DBZR)) then
+                   if(QQR(I,J,L) < SPVAL .and. QQR(I,J,L)> 0.0) then
+                     DBZR(I,J,L) = ((QQR(I,J,L)*DENS)**1.75) * 3.630803E-9 * 1.E18 ! Z FOR RAIN
+                   endif
                  else
-                   DBZR(I,J,L) = 0.
+                   if (allocated(DBZR)) DBZR(I,J,L) = 0.
                  endif
-                 if(QQS(I,J,L) < SPVAL .and. QQS(I,J,L) > 0.0) then
-                   DBZI(I,J,L) =  DBZI(I,J,L) + ((QQS(I,J,L)*DENS)**1.75) * &
-     &                                        2.18500E-10 * 1.E18   ! Z FOR SNOW
-                 else
-                   DBZI(I,J,L) = DBZI(I,J,L)
+                 if(allocated(QQS) .and. allocated(DBZI)) then
+                   if(QQS(I,J,L) < SPVAL .and. QQS(I,J,L) > 0.0) then
+                     DBZI(I,J,L) =  DBZI(I,J,L) + ((QQS(I,J,L)*DENS)**1.75) * &
+     &                                          2.18500E-10 * 1.E18   ! Z FOR SNOW
+                   else
+                     DBZI(I,J,L) = DBZI(I,J,L)
+                   endif
                  endif
-                 IF (QQG(I,J,L) < SPVAL .and. QQG(I,J,L)> 0.0) then
-                   DBZI(I,J,L) =  DBZI(I,J,L) + ((QQG(I,J,L)*DENS)**1.75) * &
-     &                                          1.033267E-9 * 1.E18 ! Z FOR GRAUP
-                 else
-                   DBZI(I,J,L) = DBZI(I,J,L)
+                 if(allocated(QQG) .and. allocated(DBZI)) then
+                   IF (QQG(I,J,L) < SPVAL .and. QQG(I,J,L)> 0.0) then
+                     DBZI(I,J,L) =  DBZI(I,J,L) + ((QQG(I,J,L)*DENS)**1.75) * &
+     &                                            1.033267E-9 * 1.E18 ! Z FOR GRAUP
+                   else
+                     DBZI(I,J,L) = DBZI(I,J,L)
+                   endif
                  endif
                IF (Model_Radar) THEN
                  ze_nc=10.**(0.1*REF_10CM(I,J,L))
@@ -912,7 +964,11 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
 !$omp parallel do private(i,j)
                DO J=JSTA,JEND
                  DO I=1,IM
-                   GRID1(I,J) = QQW(I,J,LL)
+                   if (allocated(QQW)) then
+                     GRID1(I,J) = QQW(I,J,LL)
+                   else
+                     GRID1(I,J) = 0.0
+                   endif
                    if(GRID1(I,J)<1e-20) GRID1(I,J) = 0.0
                  ENDDO
                ENDDO    
@@ -942,7 +998,11 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
 !$omp parallel do private(i,j,jj)
                DO J=JSTA,JEND
                  DO I=1,IM
-                   GRID1(I,J) = QQI(I,J,LL)
+                   if (allocated(QQI)) then
+                     GRID1(I,J) = QQI(I,J,LL)
+                   else
+                     GRID1(I,J) = 0.0
+                   endif
                    if(GRID1(I,J)<1e-20) GRID1(I,J) = 0.0
                  ENDDO
                ENDDO
@@ -972,7 +1032,11 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
 !$omp parallel do private(i,j)
                DO J=JSTA,JEND
                  DO I=1,IM
-                   GRID1(I,J) = QQR(I,J,LL)
+                   if (allocated(QQR)) then
+                     GRID1(I,J) = QQR(I,J,LL)
+                   else
+                     GRID1(I,J) = 0.0
+                   endif
                    if(GRID1(I,J)<1e-20) GRID1(I,J) = 0.0
                  ENDDO
                ENDDO
@@ -1002,7 +1066,11 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
 !$omp parallel do private(i,j)
                DO J=JSTA,JEND
                  DO I=1,IM
-                   GRID1(I,J) = QQS(I,J,LL)
+                   if (allocated(QQS)) then
+                     GRID1(I,J) = QQS(I,J,LL)
+                   else
+                     GRID1(I,J) = 0.0
+                   endif
                    if(GRID1(I,J)<1e-20) GRID1(I,J) = 0.0
                  ENDDO
                ENDDO
@@ -1032,8 +1100,12 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
 !$omp parallel do private(i,j)
                DO J=JSTA,JEND
                  DO I=1,IM
-                   if(QQG(I,J,LL) < 1.e-12) QQG(I,J,LL) = 0.     !tgs
-                      GRID1(I,J) = QQG(I,J,LL)
+                   if (allocated(QQG)) then
+                     if(QQG(I,J,LL) < 1.e-12) QQG(I,J,LL) = 0.     !tgs
+                     GRID1(I,J) = QQG(I,J,LL)
+                   else
+                     GRID1(I,J) = 0.0
+                   endif
                  ENDDO
                ENDDO    
                if(grib=="grib1" )then
@@ -1241,7 +1313,11 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
 !$omp parallel do private(i,j)
                DO J=JSTA,JEND
                  DO I=1,IM
-                   GRID1(I,J) = CFR_RAW(I,J,LL)
+                   if (allocated(CFR_RAW)) then
+                     GRID1(I,J) = CFR_RAW(I,J,LL)
+                   else
+                     GRID1(I,J) = 0.0
+                   endif
                  ENDDO
                ENDDO
                if(grib=="grib1" )then
@@ -1350,7 +1426,11 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
 !$omp parallel do private(i,j)
                DO J=JSTA,JEND
                  DO I=1,IM
-                   GRID1(I,J) = F_rain(I,J,LL)
+                   if (allocated(F_rain)) then
+                     GRID1(I,J) = F_rain(I,J,LL)
+                   else
+                     GRID1(I,J) = 0.0
+                   endif
                  ENDDO
                ENDDO
                ID(1:25) = 0
@@ -1380,7 +1460,11 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
 !$omp parallel do private(i,j)
                DO J=JSTA,JEND
                  DO I=1,IM
-                   GRID1(I,J) = F_ice(I,J,LL)
+                   if (allocated(F_ice)) then
+                     GRID1(I,J) = F_ice(I,J,LL)
+                   else
+                     GRID1(I,J) = 0.0
+                   endif
                  ENDDO
                ENDDO
                ID(1:25) = 0
@@ -2862,9 +2946,11 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
           DO J=JSTA,JEND
             DO I=1,IM
                GRID1(I,J) = DBZmin
-               DO L=1,NINT(LMH(I,J))
-                  GRID1(I,J) = MAX( GRID1(I,J), DBZ(I,J,L) )
-               ENDDO
+               if (allocated(DBZ)) then
+                 DO L=1,NINT(LMH(I,J))
+                    GRID1(I,J) = MAX( GRID1(I,J), DBZ(I,J,L) )
+                 ENDDO
+               endif
             ENDDO
           ENDDO
         ELSE
@@ -2930,10 +3016,12 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
         DO J=JSTA,JEND
           DO I=1,IM
             GRID1(I,J)=0.0
-            DO L=1,NINT(LMH(I,J))
-              GRID1(I,J)=GRID1(I,J)+0.00344* &
-              (10.**(DBZ(I,J,L)/10.))**0.57143*(ZINT(I,J,L)-ZINT(I,J,L+1))/1000.
-            ENDDO
+            if (allocated(DBZ)) then
+              DO L=1,NINT(LMH(I,J))
+                GRID1(I,J)=GRID1(I,J)+0.00344* &
+                (10.**(DBZ(I,J,L)/10.))**0.57143*(ZINT(I,J,L)-ZINT(I,J,L+1))/1000.
+              ENDDO
+            endif
           ENDDO
         ENDDO
         ID(1:25) = 0
@@ -2959,9 +3047,11 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
          DO J=JSTA,JEND
             DO I=1,IM
                GRID1(I,J)=DBZmin
-               DO L=1,NINT(LMH(I,J))
-                  GRID1(I,J)=MAX( GRID1(I,J), DBZR(I,J,L) )
-               ENDDO
+               if (allocated(DBZR)) then
+                 DO L=1,NINT(LMH(I,J))
+                    GRID1(I,J)=MAX( GRID1(I,J), DBZR(I,J,L) )
+                 ENDDO
+               endif
             ENDDO
          ENDDO
          ID(1:25) = 0
@@ -2988,9 +3078,11 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
          DO J=JSTA,JEND
             DO I=1,IM
                GRID1(I,J)=DBZmin
-               DO L=1,NINT(LMH(I,J))
-                  GRID1(I,J)=MAX( GRID1(I,J), DBZI(I,J,L) )
-               ENDDO
+               if (allocated(DBZI)) then
+                 DO L=1,NINT(LMH(I,J))
+                    GRID1(I,J)=MAX( GRID1(I,J), DBZI(I,J,L) )
+                 ENDDO
+               endif
             ENDDO
          ENDDO
          ID(1:25) = 0
@@ -3049,12 +3141,14 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
          DO J=JSTA,JEND
             DO I=1,IM
                GRID1(I,J)=0.0
-               DO L=1,NINT(LMH(I,J))
-                  IF (DBZ(I,J,L).GE.18.0) THEN
-                     GRID1(I,J)=ZMID(I,J,L)*3.2808/1000.
-                     EXIT
-                  ENDIF
-               ENDDO
+               if (allocated(DBZ)) then
+                 DO L=1,NINT(LMH(I,J))
+                    IF (DBZ(I,J,L).GE.18.0) THEN
+                       GRID1(I,J)=ZMID(I,J,L)*3.2808/1000.
+                       EXIT
+                    ENDIF
+                 ENDDO
+               endif
             ENDDO
          ENDDO
          if(grib=="grib1") then
@@ -3116,12 +3210,14 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
           DO J=JSTA,JEND
             DO I=1,IM
               GRID1(I,J) = -999.
-              DO L=1,NINT(LMH(I,J))
-                IF (DBZ(I,J,L) >= 18.0) THEN
-                   GRID1(I,J) = ZMID(I,J,L)
-                   EXIT
-                ENDIF
-              ENDDO
+              if (allocated(DBZ)) then
+                DO L=1,NINT(LMH(I,J))
+                  IF (DBZ(I,J,L) >= 18.0) THEN
+                     GRID1(I,J) = ZMID(I,J,L)
+                     EXIT
+                  ENDIF
+                ENDDO
+              endif
             ENDDO
           ENDDO
         ENDIF
@@ -3149,10 +3245,12 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
             DO I=1,IM
                GRID1(I,J)=0.0
                DO L=1,NINT(LMH(I,J))
-                  GRID1(I,J)=GRID1(I,J) + (QQR(I,J,L) +      &
-                               QQS(I,J,L) + QQG(I,J,L))*     &
+                  GRID1(I,J)=GRID1(I,J) + &
+                             ((merge(QQR(I,J,L),0.0,allocated(QQR)) + &
+                               merge(QQS(I,J,L),0.0,allocated(QQS)) + &
+                               merge(QQG(I,J,L),0.0,allocated(QQG)))*  &
                              (ZINT(I,J,L)-ZINT(I,J,L+1))*PMID(I,J,L)/  &
-                             (RD*T(I,J,L)*(Q(I,J,L)*D608+1.0))
+                             (RD*T(I,J,L)*(Q(I,J,L)*D608+1.0)))
                ENDDO
             ENDDO
          ENDDO
@@ -3195,11 +3293,13 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
           DO J=JSTA,JEND
             DO I=1,IM
               GRID1(I,J) = 0.0
-              DO L=1,NINT(LMH(I,J))
-                GRID1(I,J) = GRID1(I,J) + 0.00344 *                 &
-                            (10.**(DBZ(I,J,L)/10.))**0.57143 *      &
-                            (ZINT(I,J,L)-ZINT(I,J,L+1))/1000.
-              ENDDO
+              if (allocated(DBZ)) then
+                DO L=1,NINT(LMH(I,J))
+                  GRID1(I,J) = GRID1(I,J) + 0.00344 *                 &
+                              (10.**(DBZ(I,J,L)/10.))**0.57143 *      &
+                              (ZINT(I,J,L)-ZINT(I,J,L+1))/1000.
+                ENDDO
+              endif
             ENDDO
           ENDDO
         ENDIF
@@ -3234,11 +3334,31 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
             LLMH=NINT(LMH(I,J))
             Q1D(I,J)=Q(I,J,LLMH)
            if(Q1D(I,J).le.0.) Q1D(I,J)=0.         !tgs
-            QW1(I,J)=QQW(I,J,LLMH)
-            QR1(I,J)=QQR(I,J,LLMH)
-            QI1(I,J)=QQI(I,J,LLMH)
-            QS1(I,J)=QQS(I,J,LLMH)
-            QG1(I,J)=QQG(I,J,LLMH)      !tgs
+            if (allocated(QQW)) then
+              QW1(I,J)=QQW(I,J,LLMH)
+            else
+              QW1(I,J)=0.0
+            endif
+            if (allocated(QQR)) then
+              QR1(I,J)=QQR(I,J,LLMH)
+            else
+              QR1(I,J)=0.0
+            endif
+            if (allocated(QQI)) then
+              QI1(I,J)=QQI(I,J,LLMH)
+            else
+              QI1(I,J)=0.0
+            endif
+            if (allocated(QQS)) then
+              QS1(I,J)=QQS(I,J,LLMH)
+            else
+              QS1(I,J)=0.0
+            endif
+            if (allocated(QQG)) then
+              QG1(I,J)=QQG(I,J,LLMH)
+            else
+              QG1(I,J)=0.0
+            endif      !tgs
             T1D(I,J)=T(I,J,LLMH)
             P1D(I,J)=PMID(I,J,LLMH)
 
@@ -3473,7 +3593,11 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
             GRID1(I,J)=spval
 ! dong handle missing value
             if (slp(i,j) < spval) then
-             GRID1(I,J)=DBZ(I,J,Zm10c(I,J))
+             if (allocated(DBZ)) then
+               GRID1(I,J)=DBZ(I,J,Zm10c(I,J))
+             else
+               GRID1(I,J)=DBZmin
+             endif
             end if ! spval
            ENDDO
            ENDDO
@@ -3986,12 +4110,14 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
                 ENDIF
               ENDDO
             ELSE ! if other MP than Thompson
-              DO L=1,NINT(LMH(I,J))
-                IF(DBZ(I,J,L) > 18.3) then
-                  GRID1(I,J) = ZMID(I,J,L)
-                  go to 201
-                END IF
-              ENDDO
+              if (allocated(DBZ)) then
+                DO L=1,NINT(LMH(I,J))
+                  IF(DBZ(I,J,L) > 18.3) then
+                    GRID1(I,J) = ZMID(I,J,L)
+                    go to 201
+                    END IF
+                ENDDO
+              endif
             END IF
  201        CONTINUE
 !           if(grid1(i,j)<0.)print*,'bad echo top',  &
