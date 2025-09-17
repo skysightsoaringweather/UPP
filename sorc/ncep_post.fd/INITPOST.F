@@ -467,12 +467,12 @@
       if (allocated(qqs)) qqs=0.
       if (allocated(qqi)) qqi=0.
       if (allocated(qqg)) qqg=0. 
-      qqni=0. 
-      qqnr=0. 
+      if (allocated(qqni)) qqni=0. 
+      if (allocated(qqnr)) qqnr=0. 
       cwm=0.
 
 ! extinction coef for aerosol
-      extcof55=0.
+      if (allocated(extcof55)) extcof55=0.
       
       if(imp_physics.ne.5 .and. imp_physics.ne.0)then
       VarName='QCLOUD'
@@ -601,7 +601,7 @@
       do l = 1, lm
        do j = jsta_2l, jend_2u
         do i = 1, im
-            qqni ( i, j, l ) = dum3d ( i, j, l )
+            if (allocated(qqni)) qqni ( i, j, l ) = dum3d ( i, j, l )
         if(i.eq.im/2.and.j.eq.(jsta+jend)/2)print*,'sample QQNI= ',    &
           i,j,l,QQNI ( i, j, l )      
         end do
@@ -613,7 +613,7 @@
       do l = 1, lm
        do j = jsta_2l, jend_2u
         do i = 1, im
-            qqnr ( i, j, l ) = dum3d ( i, j, l )
+            if (allocated(qqnr)) qqnr ( i, j, l ) = dum3d ( i, j, l )
         if(i.eq.im/2.and.j.eq.(jsta+jend)/2)print*,'sample QQNR= ',    &
           i,j,l,QQNR ( i, j, l )
         end do
@@ -629,7 +629,7 @@
       do l = 1, lm
        do j = jsta_2l, jend_2u
         do i = 1, im
-            qqnw ( i, j, l ) = dum3d ( i, j, l )
+            if (allocated(qqnw)) qqnw ( i, j, l ) = dum3d ( i, j, l )
         if(i.eq.im/2.and.j.eq.(jsta+jend)/2)print*,'sample QQNW= ',    &    
           i,j,l,QQNW ( i, j, l )
         end do
@@ -641,7 +641,7 @@
       do l = 1, lm
        do j = jsta_2l, jend_2u
         do i = 1, im
-            qqnwfa ( i, j, l ) = dum3d ( i, j, l )
+            if (allocated(qqnwfa)) qqnwfa ( i, j, l ) = dum3d ( i, j, l )
         if(i.eq.im/2.and.j.eq.(jsta+jend)/2)print*,'sample QQNWFA= ', &
           i,j,l,QQNWFA ( i, j, l )
         end do
@@ -653,7 +653,7 @@
       do l = 1, lm
        do j = jsta_2l, jend_2u
         do i = 1, im
-            qqnifa ( i, j, l ) = dum3d ( i, j, l )
+            if (allocated(qqnifa)) qqnifa ( i, j, l ) = dum3d ( i, j, l )
         if(i.eq.im/2.and.j.eq.(jsta+jend)/2)print*,'sample QQNIFA= ', &
           i,j,l,QQNIFA ( i, j, l )
         end do
