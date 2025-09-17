@@ -337,17 +337,29 @@
                  IF(Q2(I,J,1)      < SPVAL) Q2SL(I,J)  = Q2(I,J,1)
                  IF(CWM(I,J,1)     < SPVAL) C1D(I,J)   = CWM(I,J,1)
                  C1D(I,J) = MAX(C1D(I,J),zero)              ! Total condensate
-                 IF(QQW(I,J,1)     < SPVAL) QW1(I,J)   = QQW(I,J,1)
+                 IF(allocated(QQW)) THEN
+                   IF(QQW(I,J,1)     < SPVAL) QW1(I,J)   = QQW(I,J,1)
+                 ENDIF
                  QW1(I,J) = MAX(QW1(I,J),zero)              ! Cloud water
-                 IF(QQI(I,J,1)     < SPVAL) QI1(I,J)   = QQI(I,J,1)
+                 IF(allocated(QQI)) THEN
+                   IF(QQI(I,J,1)     < SPVAL) QI1(I,J)   = QQI(I,J,1)
+                 ENDIF
                  QI1(I,J) = MAX(QI1(I,J),zero)              ! Cloud ice
-                 IF(QQR(I,J,1)     < SPVAL) QR1(I,J)   = QQR(I,J,1)
+                 IF(allocated(QQR)) THEN
+                   IF(QQR(I,J,1)     < SPVAL) QR1(I,J)   = QQR(I,J,1)
+                 ENDIF
                  QR1(I,J) = MAX(QR1(I,J),zero)              ! Rain 
-                 IF(QQS(I,J,1)     < SPVAL) QS1(I,J)   = QQS(I,J,1)
+                 IF(allocated(QQS)) THEN
+                   IF(QQS(I,J,1)     < SPVAL) QS1(I,J)   = QQS(I,J,1)
+                 ENDIF
                  QS1(I,J) = MAX(QS1(I,J),zero)              ! Snow (precip ice) 
-                 IF(QQG(I,J,1)     < SPVAL) QG1(I,J)   = QQG(I,J,1)
+                 IF(allocated(QQG)) THEN
+                   IF(QQG(I,J,1)     < SPVAL) QG1(I,J)   = QQG(I,J,1)
+                 ENDIF
                  QG1(I,J) = MAX(QG1(I,J),zero)              ! Graupel (precip ice) 
-                 IF(DBZ(I,J,1)     < SPVAL) DBZ1(I,J)  = DBZ(I,J,1)
+                 IF(allocated(DBZ)) THEN
+                   IF(DBZ(I,J,1)     < SPVAL) DBZ1(I,J)  = DBZ(I,J,1)
+                 ENDIF
                  DBZ1(I,J) = MAX(DBZ1(I,J),DBZmin)
                  IF(F_RimeF(I,J,1) < SPVAL) FRIME(I,J) = F_RimeF(I,J,1)
                  FRIME(I,J) = MAX(FRIME(I,J),H1)
@@ -480,28 +492,40 @@
                    C1D(I,J) = CWM(I,J,LL) + (CWM(I,J,LL)-CWM(I,J,LL-1))*FACT
                    C1D(I,J) = MAX(C1D(I,J),zero)      ! Total condensate
 
-                 IF(QQW(I,J,LL) < SPVAL .AND. QQW(I,J,LL-1) < SPVAL)         &
-                   QW1(I,J) = QQW(I,J,LL) + (QQW(I,J,LL)-QQW(I,J,LL-1))*FACT
+                 IF(allocated(QQW)) THEN
+                   IF(QQW(I,J,LL) < SPVAL .AND. QQW(I,J,LL-1) < SPVAL)         &
+                     QW1(I,J) = QQW(I,J,LL) + (QQW(I,J,LL)-QQW(I,J,LL-1))*FACT
+                 ENDIF
                    QW1(I,J) = MAX(QW1(I,J),zero)      ! Cloud water
 
-                 IF(QQI(I,J,LL) < SPVAL .AND. QQI(I,J,LL-1) < SPVAL)         &
-                   QI1(I,J) = QQI(I,J,LL) + (QQI(I,J,LL)-QQI(I,J,LL-1))*FACT
+                 IF(allocated(QQI)) THEN
+                   IF(QQI(I,J,LL) < SPVAL .AND. QQI(I,J,LL-1) < SPVAL)         &
+                     QI1(I,J) = QQI(I,J,LL) + (QQI(I,J,LL)-QQI(I,J,LL-1))*FACT
+                 ENDIF
                    QI1(I,J) = MAX(QI1(I,J),zero)      ! Cloud ice
 
-                 IF(QQR(I,J,LL) < SPVAL .AND. QQR(I,J,LL-1) < SPVAL)         &
-                   QR1(I,J) = QQR(I,J,LL) + (QQR(I,J,LL)-QQR(I,J,LL-1))*FACT
+                 IF(allocated(QQR)) THEN
+                   IF(QQR(I,J,LL) < SPVAL .AND. QQR(I,J,LL-1) < SPVAL)         &
+                     QR1(I,J) = QQR(I,J,LL) + (QQR(I,J,LL)-QQR(I,J,LL-1))*FACT
+                 ENDIF
                    QR1(I,J) = MAX(QR1(I,J),zero)      ! Rain 
 
-                 IF(QQS(I,J,LL) < SPVAL .AND. QQS(I,J,LL-1) < SPVAL)         &
-                   QS1(I,J) = QQS(I,J,LL) + (QQS(I,J,LL)-QQS(I,J,LL-1))*FACT
+                 IF(allocated(QQS)) THEN
+                   IF(QQS(I,J,LL) < SPVAL .AND. QQS(I,J,LL-1) < SPVAL)         &
+                     QS1(I,J) = QQS(I,J,LL) + (QQS(I,J,LL)-QQS(I,J,LL-1))*FACT
+                 ENDIF
                    QS1(I,J) = MAX(QS1(I,J),zero)      ! Snow (precip ice) 
 
-                 IF(QQG(I,J,LL) < SPVAL .AND. QQG(I,J,LL-1) < SPVAL)         &
-                   QG1(I,J) = QQG(I,J,LL) + (QQG(I,J,LL)-QQG(I,J,LL-1))*FACT
+                 IF(allocated(QQG)) THEN
+                   IF(QQG(I,J,LL) < SPVAL .AND. QQG(I,J,LL-1) < SPVAL)         &
+                     QG1(I,J) = QQG(I,J,LL) + (QQG(I,J,LL)-QQG(I,J,LL-1))*FACT
+                 ENDIF
                    QG1(I,J) = MAX(QG1(I,J),zero)      ! GRAUPEL (precip ice) 
 
-                 IF(DBZ(I,J,LL) < SPVAL .AND. DBZ(I,J,LL-1) < SPVAL)         &
-                   DBZ1(I,J) = DBZ(I,J,LL) + (DBZ(I,J,LL)-DBZ(I,J,LL-1))*FACT
+                 IF(allocated(DBZ)) THEN
+                   IF(DBZ(I,J,LL) < SPVAL .AND. DBZ(I,J,LL-1) < SPVAL)         &
+                     DBZ1(I,J) = DBZ(I,J,LL) + (DBZ(I,J,LL)-DBZ(I,J,LL-1))*FACT
+                 ENDIF
                    DBZ1(I,J) = MAX(DBZ1(I,J),DBZmin)
 
                  IF(F_RimeF(I,J,LL) < SPVAL .AND. F_RimeF(I,J,LL-1) < SPVAL) &
