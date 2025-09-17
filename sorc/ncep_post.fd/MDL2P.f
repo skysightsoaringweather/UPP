@@ -361,7 +361,9 @@
                    IF(DBZ(I,J,1)     < SPVAL) DBZ1(I,J)  = DBZ(I,J,1)
                  ENDIF
                  DBZ1(I,J) = MAX(DBZ1(I,J),DBZmin)
-                 IF(F_RimeF(I,J,1) < SPVAL) FRIME(I,J) = F_RimeF(I,J,1)
+                 IF(allocated(F_RimeF)) THEN
+                   IF(F_RimeF(I,J,1) < SPVAL) FRIME(I,J) = F_RimeF(I,J,1)
+                 ENDIF
                  FRIME(I,J) = MAX(FRIME(I,J),H1)
                  IF(TTND(I,J,1)    < SPVAL) RAD(I,J)   = TTND(I,J,1)
                  IF(O3(I,J,1)      < SPVAL) O3SL(I,J)  = O3(I,J,1)
@@ -528,8 +530,10 @@
                  ENDIF
                    DBZ1(I,J) = MAX(DBZ1(I,J),DBZmin)
 
-                 IF(F_RimeF(I,J,LL) < SPVAL .AND. F_RimeF(I,J,LL-1) < SPVAL) &
-                   FRIME(I,J) = F_RimeF(I,J,LL) + (F_RimeF(I,J,LL) - F_RimeF(I,J,LL-1))*FACT
+                 IF(allocated(F_RimeF)) THEN
+                   IF(F_RimeF(I,J,LL) < SPVAL .AND. F_RimeF(I,J,LL-1) < SPVAL) &
+                     FRIME(I,J) = F_RimeF(I,J,LL) + (F_RimeF(I,J,LL) - F_RimeF(I,J,LL-1))*FACT
+                 ENDIF
                    FRIME(I,J)=MAX(FRIME(I,J),H1)
 
                  IF(TTND(I,J,LL) < SPVAL .AND. TTND(I,J,LL-1) < SPVAL)        &
