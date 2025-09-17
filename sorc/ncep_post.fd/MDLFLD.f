@@ -792,6 +792,7 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
 
 !   -- rain
               ze_r = 1.e-35
+              if (.not. allocated(qqr)) go to 124
               if (qqr(i,j,ll).lt.1.e-6) go to 124
 
               rain = max(r1,qqr(i,j,ll))
@@ -804,6 +805,7 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
 
 !   -- snow
               ze_s = 1.e-35
+              if (.not. allocated(qqs)) go to 125
               if (qqs(i,j,ll).lt.1.e-6) go to 125
               snow = max(r1,qqs(i,j,ll))
 !             New SONV formulation based on Fig. 7, curve_3 of Houze et al 1979
@@ -4159,19 +4161,27 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
 !
 ! COMPUTE NCAR GTG turbulence
       IF(IGET(464)>0 .or. IGET(467)>0)THEN
-        i=IM/2
-        j=(jsta+jend)/2
-        if(me == 0) print*,'sending input to GTG i,j,hgt,gust',i,j,ZINT(i,j,LP1),gust(i,j)
+        if (allocated(qqw) .and. allocated(qqr) .and. allocated(qqs) .and. &
+            allocated(qqg) .and. allocated(qqi) .and. allocated(catedr) .and. &
+            allocated(mwt) .and. allocated(gtg)) then
+          i=IM/2
+          j=(jsta+jend)/2
+          if(me == 0) print*,'sending input to GTG i,j,hgt,gust',i,j,ZINT(i,j,LP1),gust(i,j)
 
-        call gtg_algo(uh,vh,wh,zmid,pmid,t,q,qqw,qqr,qqs,qqg,qqi,q2,&
-        ZINT(1:IM,JSTA_2L:JEND_2U,LP1),GUST,catedr,mwt,gtg)
+          call gtg_algo(uh,vh,wh,zmid,pmid,t,q,qqw,qqr,qqs,qqg,qqi,q2,&
+          ZINT(1:IM,JSTA_2L:JEND_2U,LP1),GUST,catedr,mwt,gtg)
+        else
+          if(me == 0) print*,'Skipping GTG - arrays not allocated'
+        endif
 
-        i=IM/2
-        j=jend ! 321,541
-        print*,'GTG output: l,cat,mwt,gtg at',i,j
-        do l=1,lm
-           print*,l,catedr(i,j,l),mwt(i,j,l),gtg(i,j,l)
-        end do
+        if (allocated(catedr) .and. allocated(mwt) .and. allocated(gtg)) then
+          i=IM/2
+          j=jend ! 321,541
+          print*,'GTG output: l,cat,mwt,gtg at',i,j
+          do l=1,lm
+             print*,l,catedr(i,j,l),mwt(i,j,l),gtg(i,j,l)
+          end do
+        endif
       ENDIF
 
 ! COMPUTE NCAR FIP
@@ -4189,24 +4199,28 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
         icing_gfis = spval
         DO J=JSTA,JEND
           DO I=1,IM
-            if(i==50 .and. j==jsta .and. me == 0) then
-              print*,'sending input to FIP ',i,j,lm,gdlat(i,j),gdlon(i,j),  &
-                    zint(i,j,lp1),cprate(i,j),prec(i,j),avgcprate(i,j),cape(i,j),cin(i,j)
-              do l=1,lm
-                print*,'l,P,T,RH,CWM,QQW,QQI,QQR,QQS,QQG,OMEG',&
-                     l,pmid(i,j,l),t(i,j,l),rh3d(i,j,l),cwm(i,j,l),     &
-                     q(i,j,l),qqw(i,j,l),qqi(i,j,l), &
-                     qqr(i,j,l),qqs(i,j,l),qqg(i,j,l),&
-                     rh3d(i,j,l),zmid(i,j,l),cwm(i,j,l),omga(i,j,l)
-              end do
-            end if
-            CALL ICING_ALGO(i,j,pmid(i,j,1:lm),T(i,j,1:lm),RH3D(i,j,1:lm)   &
-                ,ZMID(i,j,1:lm),OMGA(i,j,1:lm),wh(i,j,1:lm)   &
-                ,q(i,j,1:lm),CWM(I,J,1:lm),qqw(i,j,1:lm),qqi(i,j,1:lm)   &
-                ,qqr(i,j,1:lm),qqs(i,j,1:lm),qqg(i,j,1:lm)    &
-                ,lm,gdlat(i,j),gdlon(i,j),zint(i,j,lp1)                     &
-                ,prec(i,j),cprate(i,j),cape(i,j),cin(i,j)                &
-                ,icing_gfip(i,j,1:lm),icing_gfis(i,j,1:lm))
+            if (allocated(qqw) .and. allocated(qqi) .and. allocated(qqr) .and. &
+                allocated(qqs) .and. allocated(qqg) .and. allocated(icing_gfip) .and. &
+                allocated(icing_gfis)) then
+              if(i==50 .and. j==jsta .and. me == 0) then
+                print*,'sending input to FIP ',i,j,lm,gdlat(i,j),gdlon(i,j),  &
+                      zint(i,j,lp1),cprate(i,j),prec(i,j),avgcprate(i,j),cape(i,j),cin(i,j)
+                do l=1,lm
+                  print*,'l,P,T,RH,CWM,QQW,QQI,QQR,QQS,QQG,OMEG',&
+                       l,pmid(i,j,l),t(i,j,l),rh3d(i,j,l),cwm(i,j,l),     &
+                       q(i,j,l),qqw(i,j,l),qqi(i,j,l), &
+                       qqr(i,j,l),qqs(i,j,l),qqg(i,j,l),&
+                       rh3d(i,j,l),zmid(i,j,l),cwm(i,j,l),omga(i,j,l)
+                end do
+              end if
+              CALL ICING_ALGO(i,j,pmid(i,j,1:lm),T(i,j,1:lm),RH3D(i,j,1:lm)   &
+                  ,ZMID(i,j,1:lm),OMGA(i,j,1:lm),wh(i,j,1:lm)   &
+                  ,q(i,j,1:lm),CWM(I,J,1:lm),qqw(i,j,1:lm),qqi(i,j,1:lm)   &
+                  ,qqr(i,j,1:lm),qqs(i,j,1:lm),qqg(i,j,1:lm)    &
+                  ,lm,gdlat(i,j),gdlon(i,j),zint(i,j,lp1)                     &
+                  ,prec(i,j),cprate(i,j),cape(i,j),cin(i,j)                &
+                  ,icing_gfip(i,j,1:lm),icing_gfis(i,j,1:lm))
+            endif
 !           if(gdlon(i,j)>=274. .and. gdlon(i,j)<=277. .and.  gdlat(i,j)>=42. &
 !           .and. gdlat(i,j)<=45.)then
 !            print*,'sample FIP profile: l, H, T, RH, CWAT, VV, ICE POT at '  &
