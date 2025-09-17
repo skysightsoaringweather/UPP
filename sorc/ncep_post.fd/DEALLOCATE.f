@@ -71,7 +71,8 @@
 !      deallocate(rainw(im,jsta_2l:jend_2u,lm))
       deallocate(q2)
       deallocate(omga)
-      deallocate(T_ADJ)
+      ! T_ADJ - NMM model specific
+      if (allocated(T_ADJ)) deallocate(T_ADJ)
       deallocate(ttnd)
       deallocate(rswtt)
       deallocate(rlwtt)
@@ -115,7 +116,8 @@
       if (allocated(o3)) deallocate(o3)
       if (allocated(o)) deallocate(o)
       if (allocated(o2)) deallocate(o2)
-      deallocate(tcucns)
+      ! tcucns - GFS model specific
+      if (allocated(tcucns)) deallocate(tcucns)
 ! Add GFS d3d fields
       if (d3d_on) then
         deallocate(vdifftt)

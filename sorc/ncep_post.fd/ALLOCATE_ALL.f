@@ -87,7 +87,10 @@
       allocate(q2(im,jsta_2l:jend_2u,lm))
       allocate(omga(im,jsta_2l:jend_2u,lm))
 !     allocate(dpres(im,jsta_2l:jend_2u,lm))
-      allocate(T_ADJ(im,jsta_2l:jend_2u,lm))
+      ! T_ADJ - NMM model specific temperature adjustment
+      if (.not. minimal_memory) then
+        allocate(T_ADJ(im,jsta_2l:jend_2u,lm))
+      endif
       allocate(ttnd(im,jsta_2l:jend_2u,lm))
       allocate(rswtt(im,jsta_2l:jend_2u,lm))
       allocate(rlwtt(im,jsta_2l:jend_2u,lm))
@@ -139,7 +142,10 @@
         allocate(o(im,jsta_2l:jend_2u,lm))
         allocate(o2(im,jsta_2l:jend_2u,lm))
       endif
-      allocate(tcucns(im,jsta_2l:jend_2u,lm))
+      ! tcucns - GFS model specific shallow convection tendency
+      if (.not. minimal_memory) then
+        allocate(tcucns(im,jsta_2l:jend_2u,lm))
+      endif
 ! Add GFS d3d fields
       if (me == 0) print *,' d3d_on=',d3d_on
       if (d3d_on) then
